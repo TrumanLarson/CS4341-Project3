@@ -3,7 +3,7 @@ from keras.layers import Dense, Activation
 import numpy as np
 import sys
 
-def main():
+def main(argv):
     # Model Template
 
     model = Sequential() # declare model
