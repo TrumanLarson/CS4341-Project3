@@ -30,17 +30,17 @@ def main(argv):
 
     # Report Results
 
-#create the matrix
-confusionMatrix = []
-for i in range(0,10):
-    confusionMatrix.insert(0, [0,0,0,0,0,0,0,0,0,0])
+    #create the matrix
+    confusionMatrix = []
+    for i in range(0,10):
+        confusionMatrix.insert(0, [0,0,0,0,0,0,0,0,0,0])
 
-print(history.history)
-#modified
-col = model.predict()
-row = trueval()
+    print(history.history)
+    #modified
+    col = model.predict()
+    row = trueval()
 
-confusionMatrix[row][col] += 1
+    confusionMatrix[row][col] += 1
 
 
 
