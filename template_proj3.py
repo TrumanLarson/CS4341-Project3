@@ -18,20 +18,16 @@ def main(argv):
     #
     #
     #
+    model.add(Dense(50, kernel_initializer='he_normal'))
+    model.add(Activation('sigmoid'))
     # Fill in Model Here
-    model.add(Dense(10, kernel_initializer='he_normal'))
-    model.add(Activation('relu'))
-
-    model.add(Dense(10, kernel_initializer='he_normal'))
-    model.add(Activation('relu'))
-    
-    model.add(Dense(10, kernel_initializer='he_normal'))
-    model.add(Activation('relu'))
-
-    model.add(Dense(10, kernel_initializer='he_normal'))
-    model.add(Activation('relu'))
+    model.add(Dense(50, kernel_initializer='he_normal'))
+    model.add(Activation('sigmoid'))
     #
+    model.add(Dense(50, kernel_initializer='he_normal'))
+    model.add(Activation('sigmoid'))
     #
+
     model.add(Dense(10, kernel_initializer='he_normal')) # last layer
     model.add(Activation('softmax'))
 
@@ -52,29 +48,11 @@ def main(argv):
     
     
 
-    #x_train = np.reshape(x_train, 28*28)
-    x_train_new = []
-    for i in range(len(x_train)):
-        x_train_new.append(np.reshape(x_train[i], 28*28))
-    x_train = x_train_new
-    
-    x_val_new = []
-    for i in range(len(x_val)):
-        x_val_new.append(np.reshape(x_val[i], 28*28))
-    x_val = x_val_new
-    
-    x_test_new = []
-    for i in range(len(x_test)):
-        x_test_new.append(np.reshape(x_test[i], 28*28))
-    x_test = x_test_new
-
-    x_train = np.array(x_train)
-    x_val   = np.array(x_val)
-    x_test  = np.array(x_test)
+ 
 
     print("Training...")
     # Train Model
-    history = model.fit(x_train, y_train, validation_data = (x_val, y_val), epochs=100, batch_size=512)
+    history = model.fit(x_train, y_train, validation_data = (x_val, y_val), epochs=1000, batch_size=50)
 
 
     # Report Results
@@ -84,20 +62,39 @@ def main(argv):
     for i in range(0,10):
         confusionMatrix.insert(0, [0,0,0,0,0,0,0,0,0,0])
 
-    print(history.history)
+    #print(history.history)
 
+#    x_complete = x_train
+#    y_complete = y_train
 
-    x_complete = x_train.concatenate(x_val)
-    y_complete = y_train.concatenate(y_val)
+ #   x_complete = np.append(x_train, x_val)
+  #  y_complete = np.append(y_train, y_val)
     
     
-    for i in range(0,len(y_complete)):
+   
+    # for i in range(0,len(y_train):
         
-        col = model.predict((x_complete[i]), 1, 0, 1, true)#I think this works
-        row = y_complete[i]
+    #     col = model.predict((x_train[i]), batch_size=None, verbose=0, steps=None, callbacks=None, max_queue_size=10, workers=1, use_multiprocessing=False)#I think this works
+    #     row = y_train[i]
+
+    #     confusionMatrix[row][col] += 1
+
+    # for i in range(0,len(y_val):
+        
+    #     col = model.predict((x_val[i]), batch_size=None, verbose=0, steps=None, callbacks=None, max_queue_size=10, workers=1, use_multiprocessing=False)#I think this works
+    #     row = y_val[i]
+
+    #     confusionMatrix[row][col] += 1
+    print(y_test[0])
+
+    predicted = model.predict(x_test)#I think this works
+    print(predicted)
+    for i in range(0,len(y_test)):
+        # [0, ..., 0 , 1, 0, ...]
+        col = sqwish(predicted[i])
+        row = sqwish(y_test[i])
 
         confusionMatrix[row][col] += 1
-
 
     acc = modelAccuracy(confusionMatrix)
     
@@ -121,7 +118,14 @@ def main(argv):
         print(recall,end="\n")
 
 
-        
+def sqwish(array):
+    maxVal = -1
+    maxIndex = -1
+    for i in range(len(array)):        
+        if array[i] > maxVal:
+            maxVal = array[i]
+            maxIndex = i
+    return maxIndex
 #functions for analyzing success of the model
 def modelAccuracy(matrix):
     """
@@ -154,10 +158,13 @@ def modelPrecision(matrix, predictedVal):
     """   
     correct = matrix[predictedVal][predictedVal]
     total = 0
-    for i in range(0,10):
-        total += matrix[i][predictedVal]
+    for n in range(0,10):
+        total += matrix[n][predictedVal]
         
-    return (correct/total)
+    if total == 0:
+        return 0
+    else:
+        return (correct/total)
 
 
 def modelRecall(matrix, trueVal):
@@ -173,10 +180,13 @@ def modelRecall(matrix, trueVal):
     """   
     correct = matrix[trueVal][trueVal]
     total = 0
-    for i in range(0,10):
-        total += matrix[trueVal][i]
-        
-    return (correct/total)
+    for n in range(0,10):
+        total += matrix[trueVal][n]
+
+    if total == 0:
+        return 0
+    else:    
+        return (correct/total)
 
 
 def separateData(images, labels):
