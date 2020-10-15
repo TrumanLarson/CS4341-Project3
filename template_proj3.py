@@ -71,15 +71,43 @@ def main(argv):
         confusionMatrix.insert(0, [0,0,0,0,0,0,0,0,0,0])
 
     print(history.history)
-    #modified
-    col = model.predict()
-    row = 0
-    #row = trueval()
-
-    confusionMatrix[row][col] += 1
 
 
+    x_complete = x_train.concatenate(x_val)
+    y_complete = y_train.concatenate(y_val)
+    
+    
+    for i in range(0,len(y_complete)):
+        
+        col = model.predict((x_complete[i]), 1, 0, 1, true)#I think this works
+        row = y_complete[i]
 
+        confusionMatrix[row][col] += 1
+
+
+    acc = modelAccuracy(confusionMatrix)
+    
+    print("Model Accuracy: ",end="")
+    print(acc,end="\n")
+    
+    for i in range(0,10):
+        
+        precision = modelPrecision(confusionMatrix, i)
+        
+        recall = modelRecall(confusionMatrix, i)
+        
+        print("Model Precision for ",end="")
+        print(i,end="")
+        print(": ",end="")
+        print(precision,end="\n")
+
+        print("Model Recall for ",end="")
+        print(i,end="")
+        print(": ",end="")
+        print(recall,end="\n")
+
+
+        
 #functions for analyzing success of the model
 def modelAccuracy(matrix):
     """
