@@ -1,5 +1,6 @@
 from keras.models import Sequential
 from keras.layers import Dense, Activation
+from keras.utils import to_categorical
 import numpy as np
 import sys
 
@@ -13,6 +14,17 @@ def main(argv):
     #
     #
     # Fill in Model Here
+    model.add(Dense(10, kernel_initializer='he_normal'))
+    model.add(Activation('relu'))
+
+    model.add(Dense(10, kernel_initializer='he_normal'))
+    model.add(Activation('relu'))
+    
+    model.add(Dense(10, kernel_initializer='he_normal'))
+    model.add(Activation('relu'))
+
+    model.add(Dense(10, kernel_initializer='he_normal'))
+    model.add(Activation('relu'))
     #
     #
     model.add(Dense(10, kernel_initializer='he_normal')) # last layer
@@ -24,8 +36,31 @@ def main(argv):
                 loss='categorical_crossentropy', 
                 metrics=['accuracy'])
 
+    x_train = np.load("images.npy")
+    y_train = to_categorical(np.load("labels.npy"))
+
+    
+
+    #x_train = np.reshape(x_train, 28*28)
+    x_train_new = []
+    for i in range(len(x_train)):
+        x_train_new.append(np.reshape(x_train[i], 28*28))
+    x_train = x_train_new
+
+    x_train = np.array(x_train)
+    #y_train = np.reshape(y_train, -1)
+    print(x_train)
+    print(y_train)
+    x_val = x_train
+    y_val = y_train
+
+    # TODO partition training set and validation set
+    # (x_train, y_train, x_val, y_val)
+
+
+    print("Training...")
     # Train Model
-    history = model.fit(x_train, y_train, validation_data = (x_val, y_val), epochs=10, batch_size=512)
+    history = model.fit(x_train, y_train, validation_data = (x_val, y_val), epochs=100, batch_size=512)
 
 
     # Report Results
@@ -36,6 +71,7 @@ def main(argv):
         confusionMatrix.insert(0, [0,0,0,0,0,0,0,0,0,0])
 
     print(history.history)
+
 
     x_complete = x_train.concatenate(x_val)
     y_complete = y_train.concatenate(y_val)
