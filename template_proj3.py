@@ -5,6 +5,7 @@ import numpy as np
 import sys
 import math
 import random
+import matplotlib.pyplot as plt
 
 TRAINING_SET_SIZE = 0.6
 VALIDATION_SET_SIZE = 0.15
@@ -20,12 +21,14 @@ def main(argv):
     #
     model.add(Dense(50, kernel_initializer='he_normal'))
     model.add(Activation('sigmoid'))
-    # Fill in Model Here
+
+
+    model.add(Dense(200, kernel_initializer='he_normal'))
+    model.add(Activation('sigmoid'))
+
     model.add(Dense(50, kernel_initializer='he_normal'))
     model.add(Activation('sigmoid'))
-    #
-    model.add(Dense(50, kernel_initializer='he_normal'))
-    model.add(Activation('sigmoid'))
+  
     #
 
     model.add(Dense(10, kernel_initializer='he_normal')) # last layer
@@ -52,7 +55,7 @@ def main(argv):
 
     print("Training...")
     # Train Model
-    history = model.fit(x_train, y_train, validation_data = (x_val, y_val), epochs=1000, batch_size=50)
+    history = model.fit(x_train, y_train, validation_data = (x_val, y_val), epochs=10000, batch_size=50)
 
 
     # Report Results
@@ -63,7 +66,13 @@ def main(argv):
         confusionMatrix.insert(0, [0,0,0,0,0,0,0,0,0,0])
 
     #print(history.history)
-
+    plt.plot(history.history['accuracy'])
+    plt.plot(history.history['val_accuracy'])
+    plt.title('model accuracy')
+    plt.ylabel('accuracy')
+    plt.xlabel('epoch')
+    plt.legend(['train', 'test'], loc='upper left')
+    plt.show()
 #    x_complete = x_train
 #    y_complete = y_train
 
@@ -94,6 +103,9 @@ def main(argv):
         col = sqwish(predicted[i])
         row = sqwish(y_test[i])
 
+        if col != row:
+            print(x_test[i])
+
         confusionMatrix[row][col] += 1
 
     acc = modelAccuracy(confusionMatrix)
@@ -117,6 +129,7 @@ def main(argv):
         print(": ",end="")
         print(recall,end="\n")
 
+    #print(confusionMatrix)
 
 def sqwish(array):
     maxVal = -1
