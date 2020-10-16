@@ -6,6 +6,7 @@ import sys
 import math
 import random
 import matplotlib.pyplot as plt
+from PIL import Image
 
 TRAINING_SET_SIZE = 0.6
 VALIDATION_SET_SIZE = 0.15
@@ -55,7 +56,7 @@ def main(argv):
 
     print("Training...")
     # Train Model
-    history = model.fit(x_train, y_train, validation_data = (x_val, y_val), epochs=10000, batch_size=50)
+    history = model.fit(x_train, y_train, validation_data = (x_val, y_val), epochs=1000, batch_size=50)
 
 
     # Report Results
@@ -94,17 +95,18 @@ def main(argv):
     #     row = y_val[i]
 
     #     confusionMatrix[row][col] += 1
-    print(y_test[0])
 
     predicted = model.predict(x_test)#I think this works
-    print(predicted)
+    count = 0
     for i in range(0,len(y_test)):
         # [0, ..., 0 , 1, 0, ...]
         col = sqwish(predicted[i])
         row = sqwish(y_test[i])
 
         if col != row:
-            print(x_test[i])
+            im = Image.fromarray(255-x_test[i].reshape((28,28)))
+            im.save("images\\resultsActual_"+str(row)+"Predicted_"+str(col)+"__"+str(i)+".jpg")
+            count+=1 
 
         confusionMatrix[row][col] += 1
 
@@ -129,7 +131,7 @@ def main(argv):
         print(": ",end="")
         print(recall,end="\n")
 
-    #print(confusionMatrix)
+    print(confusionMatrix)
 
 def sqwish(array):
     maxVal = -1
